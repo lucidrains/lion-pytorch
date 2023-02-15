@@ -2,7 +2,7 @@
 
 ## Lion - Pytorch
 
-<a href="https://arxiv.org/abs/2302.06675">Lion</a>, new optimizer discovered by Google Brain that is purportedly better than Adam(w), in Pytorch. This is nearly a straight copy from <a href="https://github.com/google/automl/blob/master/lion/lion_pytorch.py">here</a>, with few minor modifications.
+<a href="https://arxiv.org/abs/2302.06675">Lion</a>, Evo**L**ved S**i**gn M**o**me**n**tum, new optimizer discovered by Google Brain that is purportedly better than Adam(w), in Pytorch. This is nearly a straight copy from <a href="https://github.com/google/automl/blob/master/lion/lion_pytorch.py">here</a>, with few minor modifications.
 
 It is so simple, we may as well get it accessible and used asap by everyone to train some great models, if it really works 🤞
 
@@ -11,6 +11,8 @@ In regards to learning rate, the authors write in section 5 - `Based on our expe
 Update: seems to work for my local enwik8 autoregressive language modeling
 
 Update 2: <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, seems much worse than Adam if learning rate held constant
+
+Update 3: Dividing the learning rate by 3, seeing better early results than Adam. Maybe Adam has been dethroned, after nearly a decade.
 
 ## Install
 
