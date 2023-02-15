@@ -14,6 +14,8 @@ Update 2: <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</
 
 Update 3: Dividing the learning rate by 3, seeing better early results than Adam. Maybe Adam has been dethroned, after nearly a decade.
 
+Update 4: using the 10x smaller learning rate rule of thumb from the paper resulted in the worst run. so I guess it still takes a bit of tuning
+
 ## Install
 
 ```bash
