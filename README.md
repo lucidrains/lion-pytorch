@@ -4,6 +4,8 @@
 
 It is so simple, we may as well get it accessible and used asap by everyone to train some great models, if it really works 🤞
 
+In regards to learning rate, the authors write in section 5 - `Based on our experience, a suitable learning rate for Lion is typically 10x smaller than that for AdamW, although sometimes a learning rate that is 3x smaller may perform slightly better.`
+
 Update: seems to work for my local enwik8 autoregressive language modeling
 
 ## Install
