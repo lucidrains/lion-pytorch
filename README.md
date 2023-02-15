@@ -10,6 +10,8 @@ In regards to learning rate, the authors write in section 5 - `Based on our expe
 
 Update: seems to work for my local enwik8 autoregressive language modeling
 
+Update 2: <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, seems much worse than Adam if learning rate held constant
+
 ## Install
 
 ```bash
