@@ -8,9 +8,6 @@ from torch.optim.optimizer import Optimizer
 def exists(val):
     return val is not None
 
-def inplace_ema(old, val, beta):
-    old.mul_(beta).add_(val, alpha = 1 - beta)
-
 # class
 
 class Lion(Optimizer):
@@ -49,7 +46,7 @@ class Lion(Optimizer):
                 grad = p.grad
 
                 if not exists(grad):
-                  continue
+                    continue
 
                 state = self.state[p]
                 lr, wd, beta1, beta2 = group['lr'], group['weight_decay'], *group['betas']
@@ -67,12 +64,11 @@ class Lion(Optimizer):
 
                 # weight update
 
-                update = exp_avg.clone()
-                inplace_ema(update, grad, beta1)
+                update = exp_avg.clone().lerp_(grad, 1 - beta1)
                 p.add_(torch.sign(update), alpha = -lr)
 
                 # decay the momentum running average coefficient
 
-                inplace_ema(exp_avg, grad, beta2)
+                exp_avg.lerp_(grad, 1 - beta2)
 
         return loss
