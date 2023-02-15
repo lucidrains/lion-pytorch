@@ -41,19 +41,9 @@ class Lion(Optimizer):
                 loss = closure()
 
         for group in self.param_groups:
-            for p in group['params']:
+            for p in filter(lambda p: exists(p.grad), group['params']):
 
-                grad = p.grad
-
-                if not exists(grad):
-                    continue
-
-                state = self.state[p]
-                lr, wd, beta1, beta2 = group['lr'], group['weight_decay'], *group['betas']
-
-                # stepweight decay
-
-                p.data.mul_(1 - lr * wd)
+                grad, lr, wd, beta1, beta2, state = p.grad, group['lr'], group['weight_decay'], *group['betas'], self.state[p]
 
                 # init state - exponential moving average of gradient values
 
@@ -61,6 +51,10 @@ class Lion(Optimizer):
                     state['exp_avg'] = torch.zeros_like(p)
 
                 exp_avg = state['exp_avg']
+
+                # stepweight decay
+
+                p.data.mul_(1 - lr * wd)
 
                 # weight update
 
