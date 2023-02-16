@@ -51,6 +51,16 @@ opt.step()
 opt.zero_grad()
 ```
 
+To use a fused kernel for updating the parameters, first `pip install triton`, then
+
+```python
+opt = Lion(
+    model.parameters(),
+    lr = 1e-4,
+    use_triton = True # set this to True to use cuda kernel w/ Triton lang (Tillet et al)
+)
+```
+
 ## Appreciation
 
 - <a href="https://stability.ai/">Stability.ai</a> for the generous sponsorship to work and open source cutting edge artificial intelligence research
