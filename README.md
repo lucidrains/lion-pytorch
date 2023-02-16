@@ -51,7 +51,7 @@ opt.step()
 opt.zero_grad()
 ```
 
-To use a fused kernel for updating the parameters, first `pip install triton`, then
+To use a fused kernel for updating the parameters, first `pip install triton -U --pre`, then
 
 ```python
 opt = Lion(
