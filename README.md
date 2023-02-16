@@ -51,6 +51,25 @@ opt.step()
 opt.zero_grad()
 ```
 
+## Examples
+
+You can use it out of the box for any usecase, we present in [`examples/rlhf_example.py`](./examples/rlhf_example.py) how to use it with [`trl`](https://github.com/lvwerra/trl) (Transformers Reinforcement Library) library in the context of RLHF (Reinforcement Learning with Human Feedback).
+
+```python
+...
+model = AutoModelForCausalLMWithValueHead.from_pretrained(config.model_name)
+optimizer = Lion(model.parameters(), lr=config.learning_rate)
+
+...
+ppo_trainer = PPOTrainer(config, model, ref_model, tokenizer, dataset=dataset, data_collator=collator, optimizer=optimizer)
+```
+
+In some cases and if the learning rate is well chosen, it can perform better than Adam optimizer with less GPU memory footprint
+
+<div style="text-align: center">
+<img src="https://huggingface.co/datasets/trl-internal-testing/example-images/resolve/main/images/trl-lion.png">
+</div>
+
 ## Appreciation
 
 - <a href="https://stability.ai/">Stability.ai</a> for the generous sponsorship to work and open source cutting edge artificial intelligence research
@@ -65,13 +84,3 @@ opt.zero_grad()
     publisher = {arXiv},
     year = {2023}
 }
-```
-
-```bibtex
-@article{Tillet2019TritonAI,
-    title   = {Triton: an intermediate language and compiler for tiled neural network computations},
-    author  = {Philippe Tillet and H. Kung and D. Cox},
-    journal = {Proceedings of the 3rd ACM SIGPLAN International Workshop on Machine Learning and Programming Languages},
-    year    = {2019}
-}
-```
