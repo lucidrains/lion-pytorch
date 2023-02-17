@@ -7,6 +7,11 @@ except ImportError as e:
     print('triton is not installed, please install by running `pip install triton -U --pre`')
     exit()
 
+
+@triton.autotune(configs = [
+    triton.Config({'BLOCK_SIZE': 128}, num_warps = 4),
+    triton.Config({'BLOCK_SIZE': 1024}, num_warps = 8),
+], key = ['n_elements'])
 @triton.jit
 def update_fn_kernel(
     p_ptr,
@@ -73,8 +78,7 @@ def update_fn(
     lr: float,
     wd: float,
     beta1: float,
-    beta2: float,
-    BLOCK_SIZE: int = 1024
+    beta2: float
 ):
     assert all([t.is_cuda for t in (p, grad, exp_avg)])
     n_elements = p.numel()
@@ -89,6 +93,5 @@ def update_fn(
         wd,
         beta1,
         beta2,
-        n_elements,
-        BLOCK_SIZE = BLOCK_SIZE
+        n_elements
     )
