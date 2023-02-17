@@ -17,8 +17,8 @@ def update_fn(p, grad, exp_avg, lr, wd, beta1, beta2):
 
     # weight update
 
-    update = exp_avg.clone().lerp_(grad, 1 - beta1)
-    p.add_(torch.sign(update), alpha = -lr)
+    update = exp_avg.clone().lerp_(grad, 1 - beta1).sign_()
+    p.add_(update, alpha = -lr)
 
     # decay the momentum running average coefficient
 
