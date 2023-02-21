@@ -1,8 +1,8 @@
 <img src="./lion.png" width="500px"></img>
 
-## Lion - Pytorch
+## 🦁 Lion - Pytorch
 
-<a href="https://arxiv.org/abs/2302.06675">Lion</a>, Evo**L**ved S**i**gn M**o**me**n**tum, new optimizer discovered by Google Brain that is purportedly better than Adam(w), in Pytorch. This is nearly a straight copy from <a href="https://github.com/google/automl/blob/master/lion/lion_pytorch.py">here</a>, with few minor modifications.
+<a href="https://arxiv.org/abs/2302.06675">🦁 Lion</a>, Evo**L**ved S**i**gn M**o**me**n**tum, new optimizer discovered by Google Brain that is purportedly better than Adam(w), in Pytorch. This is nearly a straight copy from <a href="https://github.com/google/automl/blob/master/lion/lion_pytorch.py">here</a>, with few minor modifications.
 
 It is so simple, we may as well get it accessible and used asap by everyone to train some great models, if it really works 🤞
 
