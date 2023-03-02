@@ -18,7 +18,7 @@ Update 3: Dividing the learning rate by 3, seeing better early results than Adam
 
 Update 4: using the 10x smaller learning rate rule of thumb from the paper resulted in the worst run. so I guess it still takes a bit of tuning
 
-Update 5: so far hearing all positive results for language modeling, when done right. also heard positive results for significant text-to-image training, although it takes a bit of tuning. the negative results seem to be with problems and architectures outside of what was evaluated in the paper - RL, feedforward networks, weird hybrid architectures with LSTMs + convolutions etc. negative anecdata also confirms this technique is sensitive to batch size, amount of data / augmentation. tbd what optimal learning rate schedule is, and whether cooldown affects results
+Update 5: so far hearing all positive results for language modeling, when done right. also heard positive results for significant text-to-image training, although it takes a bit of tuning. the negative results seem to be with problems and architectures outside of what was evaluated in the paper - RL, feedforward networks, weird hybrid architectures with LSTMs + convolutions etc. negative anecdata also confirms this technique is sensitive to batch size, amount of data / augmentation. tbd what optimal learning rate schedule is, and whether cooldown affects results. also interestingly have a positive result at open-clip, which became negative as the model size was scaled up (but may be resolvable)
 
 ## Install
 
