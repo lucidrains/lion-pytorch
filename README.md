@@ -10,6 +10,8 @@ In regards to learning rate and weight decay, the authors write in section 5 - `
 
 The authors use the same learning rate schedule for Lion as AdamW in the paper. Nevertheless, they observe a larger gain when using a cosine decay schedule, compared to a reciprocal square-root schedule.
 
+The authors recommend using betas of `(0.95, 0.98)` if one encounters instability during fine-tuning. This was <a href="https://github.com/lucidrains/lion-pytorch/issues/13#issuecomment-1455123143">corroborated by a researcher</a>.
+
 Update: seems to work for my local enwik8 autoregressive language modeling
 
 Update 2: <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, seems much worse than Adam if learning rate held constant
