@@ -22,6 +22,8 @@ Update 4: using the 10x smaller learning rate rule of thumb from the paper resul
 
 Update 5: so far hearing all positive results for language modeling, when done right. also heard positive results for significant text-to-image training, although it takes a bit of tuning. the negative results seem to be with problems and architectures outside of what was evaluated in the paper - RL, feedforward networks, weird hybrid architectures with LSTMs + convolutions etc. negative anecdata also confirms this technique is sensitive to batch size, amount of data / augmentation. tbd what optimal learning rate schedule is, and whether cooldown affects results. also interestingly have a positive result at open-clip, which became negative as the model size was scaled up (but may be resolvable)
 
+Update 6: open clip issue resolved by the author, by setting a higher initial temperature
+
 ## Install
 
 ```bash
