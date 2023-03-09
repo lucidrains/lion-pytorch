@@ -44,7 +44,7 @@ model = nn.Linear(10, 1)
 
 from lion_pytorch import Lion
 
-opt = Lion(model.parameters(), lr = 1e-4, weight_decay = 1e-2)
+opt = Lion(model.parameters(), lr=1e-4, weight_decay=1e-2)
 
 # forward and backwards
 
