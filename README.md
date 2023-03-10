@@ -6,23 +6,27 @@
 
 It is so simple, we may as well get it accessible and used asap by everyone to train some great models, if it really works 🤞
 
-In regards to learning rate and weight decay, the authors write in section 5 - `Based on our experience, a suitable learning rate for Lion is typically 3-10x smaller than that for AdamW. Since the effective weight decay is lr * λ, the value of decoupled weight decay λ used for Lion is 3-10x larger than that for AdamW in order to maintain a similar strength.`
+### Instructions
+- Learning rate and weight decay: the authors write in Section 5 - `Based on our experience, a suitable learning rate for Lion is typically 3-10x smaller than that for AdamW. Since the effective weight decay is lr * λ, the value of decoupled weight decay λ used for Lion is 3-10x larger than that for AdamW in order to maintain a similar strength.` The initial value, peak value, and end value in the learning rate schedule should be changed ***simultaneously*** with the same ratio compared to AdamW, [evidenced by a researcher](https://github.com/lucidrains/lion-pytorch/discussions/1#discussioncomment-5239900).
 
-The authors use the same learning rate schedule for Lion as AdamW in the paper. Nevertheless, they observe a larger gain when using a cosine decay schedule, compared to a reciprocal square-root schedule.
+- Learning rate schedule: the authors use the same learning rate schedule for Lion as AdamW in the paper. Nevertheless, they observe a larger gain when using a cosine decay schedule to train ViT, compared to a reciprocal square-root schedule.
 
-The authors recommend using betas of `(0.95, 0.98)` if one encounters instability during fine-tuning. This was <a href="https://github.com/lucidrains/lion-pytorch/issues/13#issuecomment-1455123143">corroborated by a researcher</a>.
+- β1 and β2: the authors write in Section 5 - `The default values for β1 and β2 in AdamW are set as 0.9 and 0.999, respectively, with an ε of 1e−8, while in Lion, the default values for β1 and β2 are discovered through the program search process and set as 0.9 and 0.99, respectively.` Similar to how people reduce β2 to 0.99 or smaller and increase ε to 1e-6 in AdamW to improve stability, using `β1=0.95, β2=0.98` in Lion can also be helpful in mitigating instability during training, suggested by the authors. This was <a href="https://github.com/lucidrains/lion-pytorch/issues/13#issuecomment-1455123143">corroborated by a researcher</a>.
 
-Update: seems to work for my local enwik8 autoregressive language modeling
+### Updates
+- Update: seems to work for my local enwik8 autoregressive language modeling.
 
-Update 2: <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, seems much worse than Adam if learning rate held constant
+- Update 2: <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, seems much worse than Adam if learning rate held constant.
 
-Update 3: Dividing the learning rate by 3, seeing better early results than Adam. Maybe Adam has been dethroned, after nearly a decade.
+- Update 3: Dividing the learning rate by 3, seeing better early results than Adam. Maybe Adam has been dethroned, after nearly a decade.
 
-Update 4: using the 10x smaller learning rate rule of thumb from the paper resulted in the worst run. so I guess it still takes a bit of tuning
+- Update 4: using the 10x smaller learning rate rule of thumb from the paper resulted in the worst run. so I guess it still takes a bit of tuning.
 
-Update 5: so far hearing all positive results for language modeling, when done right. also heard positive results for significant text-to-image training, although it takes a bit of tuning. the negative results seem to be with problems and architectures outside of what was evaluated in the paper - RL, feedforward networks, weird hybrid architectures with LSTMs + convolutions etc. negative anecdata also confirms this technique is sensitive to batch size, amount of data / augmentation. tbd what optimal learning rate schedule is, and whether cooldown affects results. also interestingly have a positive result at open-clip, which became negative as the model size was scaled up (but may be resolvable)
+A summarize of previous updates. As shown in the <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, Lion with a 3x smaller learning rate beats Adam. It still takes a bit of tuning as a 10x smaller learning rate leads to a worse result.
 
-Update 6: open clip issue resolved by the author, by setting a higher initial temperature
+- Update 5: so far hearing all positive results for language modeling, when done right. also heard positive results for significant text-to-image training, although it takes a bit of tuning. the negative results seem to be with problems and architectures outside of what was evaluated in the paper - RL, feedforward networks, weird hybrid architectures with LSTMs + convolutions etc. negative anecdata also confirms this technique is sensitive to batch size, amount of data / augmentation. tbd what optimal learning rate schedule is, and whether cooldown affects results. also interestingly have a positive result at open-clip, which became negative as the model size was scaled up (but may be resolvable).
+
+- Update 6: open clip issue [resolved by the author](https://github.com/mlfoundations/open_clip/pull/432#issuecomment-1457323237), by setting a higher initial temperature.
 
 ## Install
 
@@ -62,9 +66,9 @@ To use a fused kernel for updating the parameters, first `pip install triton -U 
 ```python
 opt = Lion(
     model.parameters(),
-    lr = 1e-4,
-    weight_decay = 1e-2,
-    use_triton = True # set this to True to use cuda kernel w/ Triton lang (Tillet et al)
+    lr=1e-4,
+    weight_decay=1e-2,
+    use_triton=True # set this to True to use cuda kernel w/ Triton lang (Tillet et al)
 )
 ```
 
