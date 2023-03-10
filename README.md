@@ -20,11 +20,11 @@ It is so simple, we may as well get it accessible and used asap by everyone to t
 
 - Update 3: Dividing the learning rate by 3, seeing better early results than Adam. Maybe Adam has been dethroned, after nearly a decade.
 
-- Update 4: using the 10x smaller learning rate rule of thumb from the paper resulted in the worst run. so I guess it still takes a bit of tuning.
+- Update 4: using the 10x smaller learning rate rule of thumb from the paper resulted in the worst run. So I guess it still takes a bit of tuning.
 
-A summarize of previous updates. As shown in the <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, Lion with a 3x smaller learning rate beats Adam. It still takes a bit of tuning as a 10x smaller learning rate leads to a worse result.
+A summarization of previous updates: as shown in the <a href="https://api.wandb.ai/links/lucidrains/d4v6c8sl">experiments</a>, Lion with a 3x smaller learning rate beats Adam. It still takes a bit of tuning as a 10x smaller learning rate leads to a worse result.
 
-- Update 5: so far hearing all positive results for language modeling, when done right. also heard positive results for significant text-to-image training, although it takes a bit of tuning. the negative results seem to be with problems and architectures outside of what was evaluated in the paper - RL, feedforward networks, weird hybrid architectures with LSTMs + convolutions etc. negative anecdata also confirms this technique is sensitive to batch size, amount of data / augmentation. tbd what optimal learning rate schedule is, and whether cooldown affects results. also interestingly have a positive result at open-clip, which became negative as the model size was scaled up (but may be resolvable).
+- Update 5: so far hearing all positive results for language modeling, when done right. Also heard positive results for significant text-to-image training, although it takes a bit of tuning. The negative results seem to be with problems and architectures outside of what was evaluated in the paper - RL, feedforward networks, weird hybrid architectures with LSTMs + convolutions etc. Negative anecdata also confirms this technique is sensitive to batch size, amount of data / augmentation. Tbd what optimal learning rate schedule is, and whether cooldown affects results. Also interestingly have a positive result at open-clip, which became negative as the model size was scaled up (but may be resolvable).
 
 - Update 6: open clip issue [resolved by the author](https://github.com/mlfoundations/open_clip/pull/432#issuecomment-1457323237), by setting a higher initial temperature.
 
