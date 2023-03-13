@@ -28,6 +28,8 @@ A summarization of previous updates: as shown in the <a href="https://api.wandb.
 
 - Update 6: open clip issue [resolved by the author](https://github.com/mlfoundations/open_clip/pull/432#issuecomment-1457323237), by setting a higher initial temperature.
 
+- Update 7: would only recommend this optimizer in the setting of high batch sizes (64 or above)
+
 ## Install
 
 ```bash
