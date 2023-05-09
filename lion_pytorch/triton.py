@@ -1,4 +1,5 @@
 import torch
+from torch import Tensor
 
 try:
     import triton
@@ -7,6 +8,7 @@ except ImportError as e:
     print('triton is not installed, please install by running `pip install triton -U --pre`')
     exit()
 
+# triton cuda kernel
 
 @triton.autotune(configs = [
     triton.Config({'BLOCK_SIZE': 128}, num_warps = 4),
@@ -72,18 +74,30 @@ def update_fn_kernel(
     tl.store(offset_exp_avg_ptr, exp_avg, mask = mask)
 
 def update_fn(
-    p: torch.Tensor,
-    grad: torch.Tensor,
-    exp_avg: torch.Tensor,
+    p: Tensor,
+    grad: Tensor,
+    exp_avg: Tensor,
     lr: float,
     wd: float,
     beta1: float,
-    beta2: float
+    beta2: float,
+    inplace: bool = True
 ):
     assert all([t.is_cuda for t in (p, grad, exp_avg)])
     n_elements = p.numel()
 
     grid = lambda meta: (triton.cdiv(n_elements, meta['BLOCK_SIZE']),)    
+
+    # address autotune and in-place update issue
+
+    if not inplace:
+        orig_p = p
+        orig_exp_avg = exp_avg
+
+        p = p.clone()
+        exp_avg = exp_avg.clone()
+
+    # call triton cuda kernel
 
     update_fn_kernel[grid](
         p,
@@ -95,3 +109,9 @@ def update_fn(
         beta2,
         n_elements
     )
+
+    # update if not in-place call
+
+    if not inplace:
+        orig_p.copy_(p)
+        orig_exp_avg.copy_(exp_avg)

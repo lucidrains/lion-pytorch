@@ -47,6 +47,8 @@ class Lion(Optimizer):
         super().__init__(params, defaults)
 
         self.update_fn = update_fn
+        self.use_triton = use_triton
+        self.took_first_step = False
 
         if use_triton:
             from lion_pytorch.triton import update_fn as triton_update_fn
@@ -62,6 +64,13 @@ class Lion(Optimizer):
         if exists(closure):
             with torch.enable_grad():
                 loss = closure()
+
+        # address an issue with autotune and in-place updates with triton
+        # on the first .step call, simply do not update parameters in-place, if using triton
+
+        update_kwargs = dict(inplace = False) if self.use_triton and not self.took_first_step else dict()
+
+        # update all parameters
 
         for group in self.param_groups:
             for p in filter(lambda p: exists(p.grad), group['params']):
@@ -82,7 +91,11 @@ class Lion(Optimizer):
                     lr,
                     wd,
                     beta1,
-                    beta2
+                    beta2,
+                    **update_kwargs
                 )
+
+        if not self.took_first_step:
+            self.took_first_step = True
 
         return loss
