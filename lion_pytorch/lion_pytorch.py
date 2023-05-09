@@ -1,3 +1,4 @@
+from functools import partial
 from typing import Tuple, Optional, Callable
 
 import torch
@@ -33,7 +34,8 @@ class Lion(Optimizer):
         lr: float = 1e-4,
         betas: Tuple[float, float] = (0.9, 0.99),
         weight_decay: float = 0.0,
-        use_triton: bool = False
+        use_triton: bool = False,
+        triton_block_size: int = 1024
     ):
         assert lr > 0.
         assert all([0. <= beta <= 1. for beta in betas])
@@ -52,7 +54,7 @@ class Lion(Optimizer):
 
         if use_triton:
             from lion_pytorch.triton import update_fn as triton_update_fn
-            self.update_fn = triton_update_fn
+            self.update_fn = partial(triton_update_fn, BLOCK_SIZE = triton_block_size)
 
     @torch.no_grad()
     def step(
@@ -64,11 +66,6 @@ class Lion(Optimizer):
         if exists(closure):
             with torch.enable_grad():
                 loss = closure()
-
-        # address an issue with autotune and in-place updates with triton
-        # on the first .step call, simply do not update parameters in-place, if using triton
-
-        update_kwargs = dict(inplace = False) if self.use_triton and not self.took_first_step else dict()
 
         # update all parameters
 
@@ -91,11 +88,7 @@ class Lion(Optimizer):
                     lr,
                     wd,
                     beta1,
-                    beta2,
-                    **update_kwargs
+                    beta2
                 )
-
-        if not self.took_first_step:
-            self.took_first_step = True
 
         return loss
