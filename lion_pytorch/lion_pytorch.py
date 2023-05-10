@@ -1,4 +1,3 @@
-from functools import partial
 from typing import Tuple, Optional, Callable
 
 import torch
@@ -34,8 +33,7 @@ class Lion(Optimizer):
         lr: float = 1e-4,
         betas: Tuple[float, float] = (0.9, 0.99),
         weight_decay: float = 0.0,
-        use_triton: bool = False,
-        triton_block_size: int = 1024
+        use_triton: bool = False
     ):
         assert lr > 0.
         assert all([0. <= beta <= 1. for beta in betas])
@@ -49,12 +47,10 @@ class Lion(Optimizer):
         super().__init__(params, defaults)
 
         self.update_fn = update_fn
-        self.use_triton = use_triton
-        self.took_first_step = False
 
         if use_triton:
             from lion_pytorch.triton import update_fn as triton_update_fn
-            self.update_fn = partial(triton_update_fn, BLOCK_SIZE = triton_block_size)
+            self.update_fn = triton_update_fn
 
     @torch.no_grad()
     def step(
@@ -66,8 +62,6 @@ class Lion(Optimizer):
         if exists(closure):
             with torch.enable_grad():
                 loss = closure()
-
-        # update all parameters
 
         for group in self.param_groups:
             for p in filter(lambda p: exists(p.grad), group['params']):
