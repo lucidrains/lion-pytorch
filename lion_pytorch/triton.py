@@ -8,18 +8,12 @@ except ImportError as e:
     print('triton is not installed, please install by running `pip install triton -U --pre`')
     exit()
 
-# helper functions
-
-def calc_num_warps(block_size):
-    num_warps = 4
-    if block_size >= 2048:
-        num_warps = 8
-    if block_size >= 4096:
-        num_warps = 16
-    return num_warps
-
 # triton cuda kernel
 
+@triton.autotune(configs = [
+    triton.Config({'BLOCK_SIZE': 128}, num_warps = 4),
+    triton.Config({'BLOCK_SIZE': 1024}, num_warps = 8),
+], key = ['n_elements'])
 @triton.jit
 def update_fn_kernel(
     p_ptr,
@@ -87,20 +81,25 @@ def update_fn(
     wd: float,
     beta1: float,
     beta2: float,
-    inplace: bool = True,
-    BLOCK_SIZE: int = 1024
+    inplace: bool = True
 ):
     assert all([t.is_cuda for t in (p, grad, exp_avg)])
-
     n_elements = p.numel()
 
-    block_size = triton.next_power_of_2(BLOCK_SIZE)
-    num_warps = calc_num_warps(block_size)
-    n_rows = triton.cdiv(n_elements, block_size)
+    grid = lambda meta: (triton.cdiv(n_elements, meta['BLOCK_SIZE']),)    
+
+    # address autotune and in-place update issue
+
+    if not inplace:
+        orig_p = p
+        orig_exp_avg = exp_avg
+
+        p = p.clone()
+        exp_avg = exp_avg.clone()
 
     # call triton cuda kernel
 
-    update_fn_kernel[(n_rows,)](
+    update_fn_kernel[grid](
         p,
         grad,
         exp_avg,
@@ -108,7 +107,11 @@ def update_fn(
         wd,
         beta1,
         beta2,
-        n_elements,
-        num_warps = num_warps,
-        BLOCK_SIZE = BLOCK_SIZE
+        n_elements
     )
+
+    # update if not in-place call
+
+    if not inplace:
+        orig_p.copy_(p)
+        orig_exp_avg.copy_(exp_avg)
