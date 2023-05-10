@@ -7,10 +7,18 @@ except ImportError as e:
     print('triton is not installed, please install by running `pip install triton -U --pre`')
     exit()
 
+# clone param and exp_avg before autotuning takes place
+# as those are updated in-place
+
+def clone_inplace_updated_params(nargs):
+    nargs['p_ptr'] = nargs['p_ptr'].clone()
+    nargs['exp_avg_ptr'] = nargs['exp_avg_ptr'].clone()
+
+# triton cuda kernel
 
 @triton.autotune(configs = [
-    triton.Config({'BLOCK_SIZE': 128}, num_warps = 4),
-    triton.Config({'BLOCK_SIZE': 1024}, num_warps = 8),
+    triton.Config({'BLOCK_SIZE': 128}, num_warps = 4, pre_hook = clone_inplace_updated_params),
+    triton.Config({'BLOCK_SIZE': 1024}, num_warps = 8, pre_hook = clone_inplace_updated_params),
 ], key = ['n_elements'])
 @triton.jit
 def update_fn_kernel(
