@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
   name = 'lion-pytorch',
   packages = find_packages(exclude=[]),
-  version = '0.1.2',
+  version = '0.1.4',
   license='MIT',
   description = 'Lion Optimizer - Pytorch',
   author = 'Phil Wang',

@@ -4,7 +4,7 @@ try:
     import triton
     import triton.language as tl
 except ImportError as e:
-    print('triton is not installed, please install by running `pip install triton -U --pre`')
+    print('triton is not installed, please install by running `pip install triton>=2.2.0`')
     exit()
 
 # triton cuda kernel
