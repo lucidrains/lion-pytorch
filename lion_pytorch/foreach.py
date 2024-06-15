@@ -22,7 +22,7 @@ class Lion(Optimizer):
     ):
         assert lr > 0.
         assert all([0. <= beta <= 1. for beta in betas])
-        assert all([hasattr(torch, attr) for attr in ('_foreach_mul_', '_foreach_add_', '_foreach_sign_', '_foreach_lerp_')]), 'this version of torch does not have the prerequisite foreach functions'
+        assert all([hasattr(torch, f'_foreach_{attr}_') for attr in ('mul', 'add', 'sign', 'lerp')]), 'this version of torch does not have the prerequisite foreach functions'
 
         self._init_lr = lr
         self.decoupled_wd = decoupled_weight_decay
