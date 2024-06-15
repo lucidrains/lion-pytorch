@@ -86,7 +86,7 @@ class Lion(Optimizer):
             torch._foreach_lerp_(updates, grads, 1. - beta1)
             torch._foreach_sign_(updates)
 
-            torch._foreach_add_(params, updates)
+            torch._foreach_add_(params, updates, alpha = -lr)
 
             # decay momentum running average
 
