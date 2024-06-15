@@ -98,3 +98,10 @@ opt = Lion(
     year    = {2019}
 }
 ```
+
+```bibtex
+@misc{Schaipp2024,
+    author  = {Fabian Schaipp},
+    url     = {https://fabian-sp.github.io/posts/2024/02/decoupling/}
+}
+```

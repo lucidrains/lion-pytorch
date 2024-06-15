@@ -17,11 +17,15 @@ class Lion(Optimizer):
         params,
         lr: float = 1e-4,
         betas: Tuple[float, float] = (0.9, 0.99),
-        weight_decay: float = 0.0
+        weight_decay: float = 0.0,
+        decoupled_weight_decay: bool = False
     ):
         assert lr > 0.
         assert all([0. <= beta <= 1. for beta in betas])
         assert all([hasattr(torch, attr) for attr in ('_foreach_mul_', '_foreach_add_', '_foreach_sign_', '_foreach_lerp_')]), 'this version of torch does not have the prerequisite foreach functions'
+
+        self._init_lr = lr
+        self.decoupled_wd = decoupled_weight_decay
 
         defaults = dict(
             lr = lr,
@@ -44,7 +48,14 @@ class Lion(Optimizer):
 
         for group in self.param_groups:
 
-            lr, wd, beta1, beta2 = group['lr'], group['weight_decay'], *group['betas']
+            lr, wd, beta1, beta2, decoupled_wd, init_lr = group['lr'], group['weight_decay'], *group['betas'], self.decoupled_wd, self._init_lr
+
+            # maybe decoupled weight decay
+
+            if decoupled_wd:
+                wd /= init_lr
+
+            # accumulate List[Tensor] for foreach inplace updates
 
             params = []
             grads = []
