@@ -35,6 +35,10 @@ A summarization of previous updates: as shown in the <a href="https://api.wandb.
 ```bash
 $ pip install lion-pytorch
 ```
+Alternatively, using conda:
+```bash
+$ conda install -c conda-forge lion-pytorch
+```
 
 ## Usage
 
