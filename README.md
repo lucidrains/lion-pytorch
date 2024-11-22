@@ -37,7 +37,7 @@ $ pip install lion-pytorch
 ```
 Alternatively, using conda:
 ```bash
-$ conda install -c conda-forge lion-pytorch
+$ conda install lion-pytorch
 ```
 
 ## Usage
