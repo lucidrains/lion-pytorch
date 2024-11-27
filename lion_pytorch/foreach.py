@@ -78,7 +78,8 @@ class Lion(Optimizer):
 
             # stepweight decay
 
-            torch._foreach_mul_(params, 1. - lr * wd)
+            if wd > 0.:
+                torch._foreach_mul_(params, 1. - lr * wd)
 
             # weight update
 

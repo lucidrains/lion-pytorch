@@ -109,3 +109,12 @@ opt = Lion(
     url     = {https://fabian-sp.github.io/posts/2024/02/decoupling/}
 }
 ```
+
+```bibtex
+@inproceedings{Liang2024CautiousOI,
+    title   = {Cautious Optimizers: Improving Training with One Line of Code},
+    author  = {Kaizhao Liang and Lizhang Chen and Bo Liu and Qiang Liu},
+    year    = {2024},
+    url     = {https://api.semanticscholar.org/CorpusID:274234738}
+}
+```
