@@ -19,6 +19,7 @@ class Lion(Optimizer):
         betas: Tuple[float, float] = (0.9, 0.99),
         weight_decay: float = 0.0,
         cautious_factor: float = 0.,
+        cautious_wd: bool = False,
         decoupled_weight_decay: bool = False,
     ):
         assert lr > 0.
@@ -32,7 +33,8 @@ class Lion(Optimizer):
             lr = lr,
             betas = betas,
             weight_decay = weight_decay,
-            cautious_factor = cautious_factor
+            cautious_factor = cautious_factor,
+            cautious_wd = cautious_wd
         )
 
         super().__init__(params, defaults)
@@ -51,7 +53,7 @@ class Lion(Optimizer):
         for group in self.param_groups:
             for p in filter(lambda p: exists(p.grad), group['params']):
 
-                grad, lr, wd, cautious_factor, beta1, beta2, state, decoupled_wd, init_lr = p.grad, group['lr'], group['weight_decay'], group['cautious_factor'], *group['betas'], self.state[p], self.decoupled_wd, self._init_lr
+                grad, lr, wd, cautious_factor, cautious_wd, beta1, beta2, state, decoupled_wd, init_lr = p.grad, group['lr'], group['weight_decay'], group['cautious_factor'], group['cautious_wd'], *group['betas'], self.state[p], self.decoupled_wd, self._init_lr
 
                 # maybe decoupled weight decay
 
@@ -65,10 +67,6 @@ class Lion(Optimizer):
 
                 exp_avg = state['exp_avg']
 
-                # stepweight decay
-
-                p.data.mul_(1. - lr * wd)
-
                 # weight update
 
                 update = exp_avg.clone().mul_(beta1).add(grad, alpha = 1. - beta1).sign_()
@@ -80,6 +78,13 @@ class Lion(Optimizer):
                     scale = torch.where(align_mask, torch.ones_like(grad), cautious_factor)
                     scale /= scale.mean().clamp(min = 1e-5)
                     update.mul_(scale)
+
+                # maybe cautious weight decay
+                # https://arxiv.org/abs/2510.12402
+
+                if wd > 0.:
+                    wd_mask = (update * p > 0).float() if cautious_wd else 1.
+                    p.data.mul_(1. - lr * wd * wd_mask)
 
                 # update params
 
