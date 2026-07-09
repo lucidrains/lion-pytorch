@@ -69,7 +69,7 @@ class Lion(Optimizer):
 
                 # weight update
 
-                update = exp_avg.clone().mul_(beta1).add(grad, alpha = 1. - beta1).sign_()
+                update = exp_avg.clone().mul_(beta1).add(grad, alpha = 1. - beta1).sgn_()
 
                 # maybe cautious update - algorithm 2 in https://arxiv.org/abs/2411.16085
 

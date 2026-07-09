@@ -18,7 +18,7 @@ def update_fn(p, grad, exp_avg, lr, wd, beta1, beta2):
 
     # weight update
 
-    update = exp_avg.clone().mul_(beta1).add(grad, alpha = 1. - beta1).sign_()
+    update = exp_avg.clone().mul_(beta1).add(grad, alpha = 1. - beta1).sgn_()
     p.add_(update, alpha = -lr)
 
     # decay the momentum running average coefficient

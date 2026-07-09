@@ -82,6 +82,7 @@ def update_fn(
     beta2: float
 ):
     assert all([t.is_cuda for t in (p, grad, exp_avg)])
+    assert not p.is_complex(), 'triton does not support complex tensors'
     n_elements = p.numel()
 
     grid = lambda meta: (triton.cdiv(n_elements, meta['BLOCK_SIZE']),)    
