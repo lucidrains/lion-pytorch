@@ -9,6 +9,20 @@ from torch.optim.optimizer import Optimizer
 def exists(val):
     return val is not None
 
+
+def _alignment_mask(update, value):
+    """Return where ``value`` points along the Lion update direction.
+
+    For real tensors this is the usual elementwise product used by the
+    cautious optimizer.  Complex tensors do not have an ordering, so their
+    alignment is defined by the real part of the Hermitian inner product.
+    """
+
+    if update.is_complex() or value.is_complex():
+        return (update.conj() * value).real > 0
+
+    return (update * value) > 0
+
 # class
 
 class Lion(Optimizer):
@@ -74,8 +88,9 @@ class Lion(Optimizer):
                 # maybe cautious update - algorithm 2 in https://arxiv.org/abs/2411.16085
 
                 if cautious_factor < 1.:
-                    align_mask = (update * grad) > 0
-                    scale = torch.where(align_mask, torch.ones_like(grad), cautious_factor)
+                    align_mask = _alignment_mask(update, grad)
+                    scale = align_mask.to(dtype=grad.real.dtype)
+                    scale = scale + (1. - scale) * cautious_factor
                     scale /= scale.mean().clamp(min = 1e-5)
                     update.mul_(scale)
 
@@ -83,7 +98,7 @@ class Lion(Optimizer):
                 # https://arxiv.org/abs/2510.12402
 
                 if wd > 0.:
-                    wd_mask = (update * p > 0).float() if cautious_wd else 1.
+                    wd_mask = _alignment_mask(update, p).to(dtype=p.real.dtype) if cautious_wd else 1.
                     p.data.mul_(1. - lr * wd * wd_mask)
 
                 # update params
